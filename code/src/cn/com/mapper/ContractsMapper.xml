@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.mapper.ContractsMapper">
+ <insert id="addContracts" parameterType="Contracts">
+    insert into contracts
+    values(#{cid},#{name},#{sex},
+           #{birth},#{age},#{qq},
+           #{number},#{phone},#{email},
+           #{workspace},#{address},#{postcode},
+           #{username},#{role})
+ </insert>
+
+  <select id="selectMaxCidByUsername" resultType="string" parameterType="User">
+      <bind name="username" value="'%'+username+'%'"/>
+      select max(cid) from contracts where cid like #{username}
+  </select>
+
+    <update id="updateContracts" parameterType="Contracts">
+        update contracts
+        set
+        name=#{name},
+        sex=#{sex},
+        birth=#{birth},
+        age=#{age},
+        qq=#{qq},
+        number=#{number},
+        phone=#{phone},
+        email=#{email},
+        workspace=#{workspace},
+        address=#{address},
+        postcode=#{postcode},
+        username=#{username},
+        role=#{role}
+        where cid=#{cid}
+    </update>
+
+
+    <delete id="deleteContracts" parameterType="string">
+        delete from contracts where cid=#{0}
+    </delete>
+
+
+    <delete id="deleteContractsList" parameterType="list">
+        delete from contracts where cid in
+        <foreach collection="list" item="cid" open="(" close=")" separator=",">
+            #{cid}
+        </foreach>
+    </delete>
+
+    <select id="getContractsById" parameterType="string" resultType="Contracts">
+        select * from contracts where cid=#{0}
+    </select>
+
+    <select id="getContractsList" parameterType="string" resultType="Contracts">
+        select * from contracts where username=#{username}
+        <if test="name!=null and name!=''">
+            <bind name="name" value="'%'+name+'%'"/>
+            and name like #{name}
+        </if>
+        <if test="number!=null and number!=''">
+            and number=#{number}
+        </if>
+        <if test="phone!=null and phone!=''">
+            and phone=#{phone}
+        </if>
+        <if test="workspace!=null and workspace!=''">
+            <bind name="workspace" value="'%'+workspace+'%'"/>
+            and workspace like #{workspace}
+        </if>
+        <if test="role!=null and role!=''">
+            and role=#{role}
+        </if>
+    </select>
+
+
+</mapper>
